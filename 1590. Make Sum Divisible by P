@@ -1,0 +1,43 @@
+#include <vector>
+#include <unordered_map>
+#include <limits>
+
+class Solution {
+public:
+    int minSubarray(std::vector<int>& nums, int p) { // Changed back to minSubarray
+        int arraySize = nums.size();
+        int totalSumModP = 0;
+
+        // Step 1: Calculate total sum mod p and the target remainder
+        for (int num : nums) {
+            totalSumModP = (totalSumModP + num) % p;
+        }
+
+        int targetRemainder = totalSumModP % p;
+        if (targetRemainder == 0) return 0;  // The array is already divisible by p
+
+        // Step 2: Use a hash map to track the last index of each prefix sum mod p
+        std::unordered_map<int, int> remainderMap;
+        remainderMap[0] = -1;  // To handle the case where the entire prefix is the answer
+        int currentRemainderSum = 0, minLengthToRemove = arraySize;
+
+        // Step 3: Iterate over the array to find the minimum subarray length to remove
+        for (int i = 0; i < arraySize; ++i) {
+            currentRemainderSum = (currentRemainderSum + nums[i]) % p;
+
+            // Calculate the required remainder to find a valid subarray
+            int requiredRemainder = (currentRemainderSum - targetRemainder + p) % p;
+
+            // If the required remainder has been seen, update the minimum length
+            if (remainderMap.find(requiredRemainder) != remainderMap.end()) {
+                minLengthToRemove = std::min(minLengthToRemove, i - remainderMap[requiredRemainder]);
+            }
+
+            // Store the current remainder and its index
+            remainderMap[currentRemainderSum] = i;
+        }
+
+        // Step 4: Return the result
+        return minLengthToRemove == arraySize ? -1 : minLengthToRemove;
+    }
+};
