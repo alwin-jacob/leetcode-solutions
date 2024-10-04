@@ -1,0 +1,30 @@
+class Solution {
+public:
+    long long dividePlayers(vector<int>& skillLevels) {
+        // Sort the skill levels in ascending order
+        sort(skillLevels.begin(), skillLevels.end());
+
+        int numberOfPlayers = skillLevels.size();
+        long long totalChemistryScore = 0;
+
+        // Calculate the target skill level for each team
+        int targetTeamSkillLevel = skillLevels[0] + skillLevels[numberOfPlayers - 1];
+
+        // Pair players from both ends of the sorted skillLevels vector
+        for (int i = 0; i < numberOfPlayers / 2; i++) {
+            // Calculate the current team's skill level
+            int currentTeamSkillLevel = skillLevels[i] + skillLevels[numberOfPlayers - i - 1];
+
+            // If the current team's skill level does not match the target, return -1
+            if (currentTeamSkillLevel != targetTeamSkillLevel) {
+                return -1;
+            }
+
+            // Calculate the chemistry score for the current team and add it to the total
+            totalChemistryScore += static_cast<long long>(skillLevels[i]) * static_cast<long long>(skillLevels[numberOfPlayers - i - 1]);
+        }
+
+        // Return the total chemistry score if all teams are valid
+        return totalChemistryScore;
+    }
+};
