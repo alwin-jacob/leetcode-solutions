@@ -1,0 +1,56 @@
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        // If s1 is longer than s2, s1 cannot be a permutation of any substring of s2
+        if (s1.length() > s2.length())
+            return false;
+
+        // Arrays to count occurrences of each character in s1 and the current window in s2
+        int[] s1CharCount = new int[26]; // Character count for s1
+        int[] s2CharCount = new int[26]; // Character count for current window in s2
+
+        // Initialize the character counts for s1 and the first window of s2
+        for (int i = 0; i < s1.length(); i++) {
+            s1CharCount[s1.charAt(i) - 'a']++;
+            s2CharCount[s2.charAt(i) - 'a']++;
+        }
+
+        // Count how many characters match in frequency between s1 and the initial window of s2
+        int matchingCharCount = 0; // Tracks the number of characters that match in both arrays
+        for (int i = 0; i < 26; i++) {
+            if (s1CharCount[i] == s2CharCount[i])
+                matchingCharCount++;
+        }
+
+        // Slide the window over s2 to check other substrings
+        for (int i = 0; i < s2.length() - s1.length(); i++) {
+            // 'r' is the character that is entering the window, 'l' is the character that is leaving the window
+            int charEntering = s2.charAt(i + s1.length()) - 'a'; // Character entering the window
+            int charLeaving = s2.charAt(i) - 'a'; // Character leaving the window
+
+            // If all characters match, we've found a valid permutation
+            if (matchingCharCount == 26)
+                return true;
+
+            // Update the counts for the character entering the window
+            s2CharCount[charEntering]++;
+            // Update matching count based on the new character
+            if (s2CharCount[charEntering] == s1CharCount[charEntering]) {
+                matchingCharCount++; // Character count matched
+            } else if (s2CharCount[charEntering] == s1CharCount[charEntering] + 1) {
+                matchingCharCount--; // Overmatched
+            }
+
+            // Update the counts for the character leaving the window
+            s2CharCount[charLeaving]--;
+            // Update matching count based on the character leaving
+            if (s2CharCount[charLeaving] == s1CharCount[charLeaving]) {
+                matchingCharCount++; // Character count matched
+            } else if (s2CharCount[charLeaving] == s1CharCount[charLeaving] - 1) {
+                matchingCharCount--; // Undermatched
+            }
+        }
+
+        // Check if all character counts matched after the last window
+        return matchingCharCount == 26;
+    }
+}
