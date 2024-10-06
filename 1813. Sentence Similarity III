@@ -1,0 +1,38 @@
+#include <string>
+#include <sstream>
+#include <deque>
+#include <iterator>
+
+class Solution {
+public:
+    // Function to determine if two sentences are similar
+    bool areSentencesSimilar(std::string sentence1, std::string sentence2) {
+        // Use istringstream to split the sentences into words
+        std::istringstream wordStream1(sentence1);
+        std::deque<std::string> words1{
+            std::istream_iterator<std::string>(wordStream1),
+            std::istream_iterator<std::string>()
+        };
+
+        std::istringstream wordStream2(sentence2);
+        std::deque<std::string> words2{
+            std::istream_iterator<std::string>(wordStream2),
+            std::istream_iterator<std::string>()
+        };
+
+        // Compare and remove matching prefixes from both sentences
+        while (!words1.empty() && !words2.empty() && words1.front() == words2.front()) {
+            words1.pop_front();
+            words2.pop_front();
+        }
+
+        // Compare and remove matching suffixes from both sentences
+        while (!words1.empty() && !words2.empty() && words1.back() == words2.back()) {
+            words1.pop_back();
+            words2.pop_back();
+        }
+
+        // If one of the deques is empty, the sentences are similar
+        return words1.empty() || words2.empty();
+    }
+};
