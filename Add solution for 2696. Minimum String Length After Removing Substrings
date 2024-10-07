@@ -1,0 +1,37 @@
+#include <string>
+#include <stack>
+
+class Solution {
+public:
+    // Function to determine the minimum length of the string after removing "AB" and "CD" pairs
+    int minLength(std::string inputString) {
+        std::stack<char> characterStack; // Stack to track characters
+
+        // Iterate over each character in the input string
+        for (int index = 0; index < inputString.length(); index++) {
+            char currentChar = inputString[index];
+
+            // If the stack is empty, simply push the current character
+            if (characterStack.empty()) {
+                characterStack.push(currentChar);
+                continue;
+            }
+
+            // Check for the "AB" pattern and remove the pair by popping from the stack
+            if (currentChar == 'B' && characterStack.top() == 'A') {
+                characterStack.pop();
+            }
+            // Check for the "CD" pattern and remove the pair by popping from the stack
+            else if (currentChar == 'D' && characterStack.top() == 'C') {
+                characterStack.pop();
+            }
+            // Otherwise, push the current character onto the stack
+            else {
+                characterStack.push(currentChar);
+            }
+        }
+
+        // Return the size of the stack, representing the remaining characters
+        return characterStack.size();
+    }
+};
