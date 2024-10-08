@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int minSwaps(string s) {
+        // Stack to keep track of opening brackets.
+        stack<char> openingBracketsStack;
+        // Counter for unbalanced closing brackets.
+        int unbalancedClosingCount = 0;
+
+        // Iterate through each character in the string.
+        for (int i = 0; i < s.size(); i++) {
+            char currentChar = s[i];
+
+            // If an opening bracket is encountered, push it onto the stack.
+            if (currentChar == '[') {
+                openingBracketsStack.push(currentChar);
+            } else {
+                // If the stack is not empty, there is a matching opening bracket, so pop it.
+                if (!openingBracketsStack.empty()) {
+                    openingBracketsStack.pop();
+                } 
+                // If the stack is empty, it means there's an unbalanced closing bracket.
+                else {
+                    unbalancedClosingCount++;
+                }
+            }
+        }
+
+        // Each pair of unbalanced brackets requires one swap, so we divide by 2.
+        return (unbalancedClosingCount + 1) / 2;
+    }
+};
