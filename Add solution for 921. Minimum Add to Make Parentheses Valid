@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int minAddToMakeValid(string s) {
+        int unmatchedOpenBrackets = 0;  // Count of unmatched opening brackets
+        int additionalBracketsNeeded = 0; // Count of additional brackets required to make the string valid
+
+        for (char currentChar : s) {
+            if (currentChar == '(') {
+                unmatchedOpenBrackets++; // Increment for an unmatched opening bracket
+            } else {
+                // If there is an unmatched opening bracket, match it with the closing one
+                // If not, we need to add an opening bracket for this closing one
+                unmatchedOpenBrackets > 0 ? unmatchedOpenBrackets-- : additionalBracketsNeeded++;
+            }
+        }
+
+        // The total additional brackets needed is the sum of:
+        // - unmatched closing brackets (additionalBracketsNeeded)
+        // - remaining unmatched opening brackets (unmatchedOpenBrackets)
+        return additionalBracketsNeeded + unmatchedOpenBrackets;
+    }
+};
