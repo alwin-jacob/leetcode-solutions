@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int maxWidthRamp(vector<int>& nums) {
+        int arraySize = nums.size();   // Size of the input array
+        vector<int> sortedIndices(arraySize); // Array to store indices of nums
+
+        // Initialize the sortedIndices array with original indices
+        for (int index = 0; index < arraySize; index++) {
+            sortedIndices[index] = index;
+        }
+
+        // Sort the indices based on corresponding values in nums
+        // Ensures stability in case of equal values
+        sort(sortedIndices.begin(), sortedIndices.end(), [&](int index1, int index2) {
+            return nums[index1] != nums[index2] ? nums[index1] < nums[index2] : index1 < index2;
+        });
+
+        int minimumIndex = arraySize;  // Minimum index encountered so far
+        int maximumWidth = 0;           // Variable to track the maximum width found
+
+        // Calculate the maximum width ramp
+        for (int i = 0; i < arraySize; i++) {
+            maximumWidth = max(maximumWidth, sortedIndices[i] - minimumIndex);
+            minimumIndex = min(minimumIndex, sortedIndices[i]);
+        }
+
+        return maximumWidth;  // Return the maximum width found
+    }
+};
