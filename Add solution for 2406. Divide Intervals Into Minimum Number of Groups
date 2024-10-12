@@ -1,0 +1,33 @@
+class Solution {
+public:
+    int minGroups(vector<vector<int>>& intervals) {
+        // Initialize variables to track the minimum start and maximum end of intervals
+        int minStart = INT_MAX;
+        int maxEnd = INT_MIN;
+
+        // Iterate through each interval to find the overall range
+        for (const vector<int>& interval : intervals) {
+            minStart = min(minStart, interval[0]);
+            maxEnd = max(maxEnd, interval[1]);
+        }
+
+        // Create a difference array to track changes in interval counts at specific points
+        vector<int> timeline(maxEnd + 2, 0);
+        for (const vector<int>& interval : intervals) {
+            timeline[interval[0]]++;      // Start of an interval increases count
+            timeline[interval[1] + 1]--;  // End of an interval decreases count
+        }
+
+        // Variables to track the current number of overlapping intervals and the maximum found
+        int currentActiveIntervals = 0;
+        int maxActiveIntervals = 0;
+
+        // Traverse through the timeline to calculate active intervals at each point
+        for (int i = minStart; i <= maxEnd; i++) {
+            currentActiveIntervals += timeline[i];  // Update active intervals
+            maxActiveIntervals = max(maxActiveIntervals, currentActiveIntervals);  // Record max
+        }
+
+        return maxActiveIntervals;  // Return the maximum number of overlapping intervals
+    }
+};
