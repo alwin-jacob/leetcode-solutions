@@ -1,0 +1,47 @@
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        vector<pair<int, int>> mergedList;
+
+        // Merge all numbers into a single list with their corresponding list index
+        for (int listIndex = 0; listIndex < nums.size(); listIndex++) {
+            for (int number : nums[listIndex]) {
+                mergedList.push_back({number, listIndex});
+            }
+        }
+
+        // Sort the merged list based on the numbers
+        sort(mergedList.begin(), mergedList.end());
+
+        // Use a map to track the frequency of numbers from each list
+        unordered_map<int, int> listFrequency;
+        int leftPointer = 0, uniqueListCount = 0;
+        int smallestRangeStart = 0, smallestRangeEnd = INT_MAX;
+
+        // Iterate through the sorted list with a right pointer
+        for (int rightPointer = 0; rightPointer < mergedList.size(); rightPointer++) {
+            // Increment the frequency of the current list index
+            listFrequency[mergedList[rightPointer].second]++;
+            // If this list's number is added for the first time, increment unique count
+            if (listFrequency[mergedList[rightPointer].second] == 1) uniqueListCount++;
+
+            // When all lists are represented, try to shrink the window from the left
+            while (uniqueListCount == nums.size()) {
+                int currentRange = mergedList[rightPointer].first - mergedList[leftPointer].first;
+                // Update the smallest range if the current range is smaller
+                if (currentRange < smallestRangeEnd - smallestRangeStart) {
+                    smallestRangeStart = mergedList[leftPointer].first;
+                    smallestRangeEnd = mergedList[rightPointer].first;
+                }
+
+                // Remove the leftmost element and update the frequency
+                listFrequency[mergedList[leftPointer].second]--;
+                if (listFrequency[mergedList[leftPointer].second] == 0) uniqueListCount--;
+                leftPointer++;  // Move the left pointer to the right
+            }
+        }
+
+        // Return the smallest range found
+        return {smallestRangeStart, smallestRangeEnd};
+    }
+};
