@@ -1,0 +1,27 @@
+class Solution {
+public:
+    long long maxKelements(vector<int>& numbers, int k) {
+        long long totalSum = 0; // Variable to hold the total sum of the selected elements
+        
+        // Create a max-heap (priority queue) to store the elements in descending order
+        priority_queue<int> maxHeap;
+        
+        // Insert all elements from the input vector into the max-heap
+        for (auto& num : numbers) {
+            maxHeap.push(num);
+        }
+
+        // Process 'k' times to get the maximum elements
+        while (k--) {
+            // Get the largest element from the max-heap
+            int largestElement = maxHeap.top();
+            totalSum += largestElement; // Add the largest element to the total sum
+            maxHeap.pop(); // Remove the largest element from the heap
+            
+            // Push one-third of the largest element back into the max-heap
+            maxHeap.push(ceil(largestElement / 3.0));
+        }
+        
+        return totalSum; // Return the total sum of the selected elements
+    }
+};
