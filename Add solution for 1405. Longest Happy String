@@ -1,0 +1,41 @@
+class Solution {
+public:
+    string longestDiverseString(int countA, int countB, int countC) {
+        int streakA = 0, streakB = 0, streakC = 0;  // Track consecutive counts for each character
+        int totalChars = countA + countB + countC;   // Total number of characters to place
+        string result = "";  // The final resulting string
+
+        // Iterate until we've placed all the characters
+        for (int i = 0; i < totalChars; i++) {
+            // Choose 'a' if it has the most remaining characters and the streak is less than 2
+            // Or if the streak of 'b' or 'c' is 2 and we must alternate
+            if ((countA >= countB && countA >= countC && streakA < 2) || 
+                (countA > 0 && (streakB == 2 || streakC == 2))) {
+                result += 'a';
+                countA--;               // Decrement the count of 'a'
+                streakA++;              // Increment the streak for 'a'
+                streakB = 0;            // Reset streak for 'b'
+                streakC = 0;            // Reset streak for 'c'
+            } 
+            // Choose 'b' similarly if it has the most remaining characters and the streak is less than 2
+            else if ((countB >= countA && countB >= countC && streakB < 2) || 
+                     (countB > 0 && (streakC == 2 || streakA == 2))) {
+                result += 'b';
+                countB--;
+                streakB++;
+                streakA = 0;
+                streakC = 0;
+            } 
+            // Choose 'c' similarly if it has the most remaining characters and the streak is less than 2
+            else if ((countC >= countA && countC >= countB && streakC < 2) || 
+                     (countC > 0 && (streakA == 2 || streakB == 2))) {
+                result += 'c';
+                countC--;
+                streakC++;
+                streakA = 0;
+                streakB = 0;
+            }
+        }
+        return result;
+    }
+};
