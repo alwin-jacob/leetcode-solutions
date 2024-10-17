@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int maximumSwap(int num) {
+        string numStr = to_string(num);  // Convert the number to string for easy manipulation
+        int length = numStr.size();       // Get the length of the string
+        int maxDigitIndex = -1;           // Store the index of the largest digit found so far
+        int firstSwapIndex = -1;          // Index of the digit to be swapped (smaller)
+        int secondSwapIndex = -1;         // Index of the digit to swap with (larger)
+
+        // Traverse the string from right to left to find the largest possible swap
+        for (int i = length - 1; i >= 0; --i) {
+            // Update maxDigitIndex if the current digit is larger than the max found so far
+            if (maxDigitIndex == -1 || numStr[i] > numStr[maxDigitIndex]) {
+                maxDigitIndex = i;  // Found a new maximum digit
+            }
+            // If the current digit is smaller than the largest digit seen later, record the swap
+            else if (numStr[i] < numStr[maxDigitIndex]) {
+                firstSwapIndex = i;  // Store the smaller digit's index (potential swap)
+                secondSwapIndex = maxDigitIndex;  // Store the larger digit's index (potential swap)
+            }
+        }
+
+        // If a valid swap is found (both indices are set), perform the swap
+        if (firstSwapIndex != -1 && secondSwapIndex != -1) {
+            swap(numStr[firstSwapIndex], numStr[secondSwapIndex]);
+        }
+
+        // Convert the modified string back to an integer and return it
+        return stoi(numStr);  // Return the resulting number after the swap, or the original number if no swap is made
+    }
+};
