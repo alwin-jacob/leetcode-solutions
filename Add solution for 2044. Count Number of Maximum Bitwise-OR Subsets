@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int countMaxOrSubsets(vector<int>& nums) {
+        // Variable to track the maximum OR value found
+        int maxOrValue = 0;
+        
+        // Dynamic programming array to count subsets that achieve specific OR values
+        vector<int> subsetCount(1 << 17, 0);
+        
+        // Initialize the count for the empty subset
+        subsetCount[0] = 1;
+
+        // Iterate through each number in the input array
+        for (int currentNum : nums) {
+            // Update the DP array from the back to avoid using the same number multiple times
+            for (int existingOrValue = maxOrValue; existingOrValue >= 0; existingOrValue--) {
+                // Create a new OR value by including the current number
+                subsetCount[existingOrValue | currentNum] += subsetCount[existingOrValue];
+            }
+            // Update the maximum OR value encountered so far
+            maxOrValue |= currentNum;
+        }
+
+        // Return the count of subsets that achieve the maximum OR value
+        return subsetCount[maxOrValue];
+    }
+};
