@@ -1,0 +1,48 @@
+class Solution {
+public:
+    bool parseBoolExpr(string expression) {
+        stack<char> operatorStack;
+
+        // Traverse through the expression
+        for (char currentChar : expression) {
+            if (currentChar == ',' || currentChar == '(')
+                continue;  // Skip commas and open parentheses
+
+            // Push boolean values and operators onto the stack
+            if (currentChar == 't' || currentChar == 'f' || 
+                currentChar == '!' || currentChar == '&' || 
+                currentChar == '|') {
+                operatorStack.push(currentChar);
+            }
+            // Handle closing parentheses and evaluate the subexpression
+            else if (currentChar == ')') {
+                bool containsTrue = false, containsFalse = false;
+
+                // Process the values inside the parentheses
+                while (operatorStack.top() != '!' && 
+                       operatorStack.top() != '&' && 
+                       operatorStack.top() != '|') {
+                    char topValue = operatorStack.top();
+                    operatorStack.pop();
+                    if (topValue == 't') containsTrue = true;
+                    if (topValue == 'f') containsFalse = true;
+                }
+
+                // Pop the operator and evaluate the subexpression
+                char operatorChar = operatorStack.top();
+                operatorStack.pop();
+                
+                if (operatorChar == '!') {
+                    operatorStack.push(containsTrue ? 'f' : 't'); // Negation
+                } else if (operatorChar == '&') {
+                    operatorStack.push(containsFalse ? 'f' : 't'); // AND operation
+                } else {
+                    operatorStack.push(containsTrue ? 't' : 'f'); // OR operation
+                }
+            }
+        }
+
+        // The final result is at the top of the stack
+        return operatorStack.top() == 't'; // Return true if top value is 't'
+    }
+};
