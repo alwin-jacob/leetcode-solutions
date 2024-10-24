@@ -1,0 +1,62 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void convertToCanonicalForm(TreeNode* node) {
+        // Base case: if the node is null, return
+        if (!node) return;
+
+        // Perform post-order traversal: process left and right subtrees first
+        convertToCanonicalForm(node->left);
+        convertToCanonicalForm(node->right);
+
+        // If there is no right subtree, there's nothing to adjust
+        if (!node->right) return;
+
+        // If there is no left subtree, move the right subtree to the left
+        if (!node->left) {
+            node->left = node->right; // Move right subtree to left
+            node->right = nullptr;     // Set right subtree to null
+            return;
+        }
+
+        TreeNode* leftChild = node->left;    // Reference to the left child
+        TreeNode* rightChild = node->right;  // Reference to the right child
+
+        // Swap the children if the left child's value is greater than the right child's value
+        if (leftChild->val > rightChild->val) {
+            node->left = rightChild;  // Move right child to left
+            node->right = leftChild;   // Move left child to right
+        }
+    }
+
+    bool areTreesEquivalent(TreeNode* tree1, TreeNode* tree2) {
+        // Check for null nodes: both must be null to be equivalent
+        if (!tree1 && !tree2) return true;
+        // If one is null and the other is not, they are not equivalent
+        if (!tree1 || !tree2) return false;
+        // If values are different, the trees are not equivalent
+        if (tree1->val != tree2->val) return false;
+
+        // Recursively check the left and right subtrees for equivalence
+        return areTreesEquivalent(tree1->left, tree2->left) &&
+               areTreesEquivalent(tree1->right, tree2->right);
+    }
+
+    bool flipEquiv(TreeNode* root1, TreeNode* root2) {
+        // Convert both trees to their canonical forms
+        convertToCanonicalForm(root1);
+        convertToCanonicalForm(root2);
+        // Check if the two trees are equivalent
+        return areTreesEquivalent(root1, root2);
+    }
+};
