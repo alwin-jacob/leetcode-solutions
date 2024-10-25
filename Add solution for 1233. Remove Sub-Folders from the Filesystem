@@ -1,0 +1,78 @@
+class Solution {
+private:
+    struct TrieNode {
+        bool isEndOfPath;  // Indicates if this node marks the end of a folder path
+        unordered_map<string, TrieNode*> children;  // Children nodes for subfolders
+
+        // Constructor to initialize a TrieNode
+        TrieNode() : isEndOfPath(false) {}
+    };
+
+    TrieNode* root;  // Root of the Trie
+
+    // Recursively deletes all TrieNodes to free memory
+    void deleteTrie(TrieNode* node) {
+        if (node == nullptr) return;  // Base case
+        for (auto& pair : node->children) {
+            deleteTrie(pair.second);  // Recursively delete children
+        }
+        delete node;  // Delete the current node
+    }
+
+public:
+    // Constructor initializes the root of the Trie
+    Solution() : root(new TrieNode()) {}
+
+    // Destructor to clean up memory by deleting all TrieNodes
+    ~Solution() { deleteTrie(root); }
+
+    // Function to remove subfolders from the list of folder paths
+    vector<string> removeSubfolders(vector<string>& folderPaths) {
+        // Build the Trie from folder paths
+        for (string& path : folderPaths) {
+            TrieNode* currentNode = root;  // Start from the root
+            istringstream pathStream(path);  // Stream to parse the path
+            string folderPart;  // Current folder part being processed
+
+            // Split the path by '/'
+            while (getline(pathStream, folderPart, '/')) {
+                // Skip empty folder names
+                if (folderPart.empty()) continue;
+                // Create a new node if it doesn't exist
+                if (currentNode->children.find(folderPart) == currentNode->children.end()) {
+                    currentNode->children[folderPart] = new TrieNode();
+                }
+                currentNode = currentNode->children[folderPart];  // Move to the child node
+            }
+            // Mark the end of the folder path
+            currentNode->isEndOfPath = true;
+        }
+
+        // Check each path to determine if it's a subfolder
+        vector<string> nonSubfolders;  // Resultant list of non-subfolder paths
+        for (string& path : folderPaths) {
+            TrieNode* currentNode = root;  // Reset to the root for each path
+            istringstream pathStream(path);  // Stream to parse the path
+            string folderPart;  // Current folder part being processed
+            bool isSubFolder = false;  // Flag to check if the current path is a subfolder
+
+            // Split the path by '/'
+            while (getline(pathStream, folderPart, '/')) {
+                // Skip empty folder names
+                if (folderPart.empty()) continue;
+                TrieNode* nextNode = currentNode->children[folderPart];  // Get the next node
+
+                // Check if the current folder path is a subfolder of an existing folder
+                if (nextNode->isEndOfPath && pathStream.rdbuf()->in_avail() != 0) {
+                    isSubFolder = true;  // Mark as a subfolder
+                    break;  // Exit the loop
+                }
+                currentNode = nextNode;  // Move to the next node
+            }
+            // If not a subfolder, add the path to the result
+            if (!isSubFolder) nonSubfolders.push_back(path);
+        }
+
+        return nonSubfolders;  // Return the list of non-subfolder paths
+    }
+};
