@@ -1,0 +1,78 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> treeQueries(TreeNode* root, vector<int>& queries) {
+        int maxNodes = 100000;  // Maximum number of nodes
+        // Vectors to store the depth of each node and the height of each subtree
+        vector<int> nodeDepths(maxNodes + 1, 0);
+        vector<int> subtreeHeights(maxNodes + 1, 0);
+
+        // Vectors to store the first and second largest heights at each depth level
+        vector<int> largestHeightAtLevel(maxNodes + 1, 0);
+        vector<int> secondLargestHeightAtLevel(maxNodes + 1, 0);
+
+        // Perform DFS to calculate depths and heights
+        performDepthFirstSearch(root, 0, nodeDepths, subtreeHeights, 
+                                largestHeightAtLevel, secondLargestHeightAtLevel);
+
+        vector<int> queryResults;  // Vector to store results for each query
+        queryResults.reserve(queries.size());  // Reserve space for efficiency
+
+        // Process each query
+        for (int queryNode : queries) {
+            int nodeDepth = nodeDepths[queryNode];
+
+            // Calculate the height of the tree after removing the queried node
+            if (subtreeHeights[queryNode] == largestHeightAtLevel[nodeDepth]) {
+                queryResults.push_back(nodeDepth + secondLargestHeightAtLevel[nodeDepth] - 1);
+            } else {
+                queryResults.push_back(nodeDepth + largestHeightAtLevel[nodeDepth] - 1);
+            }
+        }
+
+        return queryResults;  // Return the results for all queries
+    }
+
+private:
+    // Depth-first search to calculate node depths and subtree heights
+    int performDepthFirstSearch(TreeNode* node, int currentDepth, vector<int>& nodeDepths,
+                                 vector<int>& subtreeHeights, vector<int>& largestHeightAtLevel,
+                                 vector<int>& secondLargestHeightAtLevel) {
+        if (node == nullptr) return 0;  // Base case for recursion
+
+        nodeDepths[node->val] = currentDepth;  // Set the depth of the current node
+
+        // Recursively calculate the heights of left and right subtrees
+        int leftSubtreeHeight = performDepthFirstSearch(node->left, currentDepth + 1, 
+                                                         nodeDepths, subtreeHeights,
+                                                         largestHeightAtLevel, 
+                                                         secondLargestHeightAtLevel);
+        int rightSubtreeHeight = performDepthFirstSearch(node->right, currentDepth + 1, 
+                                                          nodeDepths, subtreeHeights,
+                                                          largestHeightAtLevel, 
+                                                          secondLargestHeightAtLevel);
+        int currentSubtreeHeight = 1 + max(leftSubtreeHeight, rightSubtreeHeight);  // Current subtree height
+
+        subtreeHeights[node->val] = currentSubtreeHeight;  // Store the height of the current subtree
+
+        // Update the largest and second largest heights at the current depth level
+        if (currentSubtreeHeight > largestHeightAtLevel[currentDepth]) {
+            secondLargestHeightAtLevel[currentDepth] = largestHeightAtLevel[currentDepth];
+            largestHeightAtLevel[currentDepth] = currentSubtreeHeight;
+        } else if (currentSubtreeHeight > secondLargestHeightAtLevel[currentDepth]) {
+            secondLargestHeightAtLevel[currentDepth] = currentSubtreeHeight;
+        }
+
+        return currentSubtreeHeight;  // Return the height of the current subtree
+    }
+};
