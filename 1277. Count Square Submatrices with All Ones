@@ -1,0 +1,24 @@
+class Solution {
+public:
+    int countSquares(vector<vector<int>>& matrix) {
+        int numRows = matrix.size();  // Number of rows in the matrix
+        int numCols = matrix[0].size();  // Number of columns in the matrix
+        // Dynamic programming table to store the size of the largest square ending at each position
+        vector<vector<int>> dp(numRows + 1, vector<int>(numCols + 1, 0));
+        int totalSquares = 0;  // Total count of squares
+
+        // Iterate through each cell in the matrix
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                // Check if the current cell contains a '1'
+                if (matrix[row][col] == 1) {
+                    // Update the dp table using the minimum of the three adjacent cells
+                    dp[row + 1][col + 1] = min({dp[row][col + 1], dp[row + 1][col], dp[row][col]}) + 1;
+                    // Add the size of the square ending at the current cell to the total count
+                    totalSquares += dp[row + 1][col + 1];
+                }
+            }
+        }
+        return totalSquares;  // Return the total count of squares
+    }
+};
