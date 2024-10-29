@@ -1,0 +1,47 @@
+class Solution {
+public:
+    int maxMoves(vector<vector<int>>& grid) {
+        int rows = grid.size();               // Number of rows in the grid
+        int cols = grid[0].size();            // Number of columns in the grid
+
+        vector<vector<int>> dp(rows, vector<int>(2, 0)); // DP array for tracking moves
+
+        // Initialize the first column of dp with 1, indicating starting positions
+        for (int r = 0; r < rows; r++) {
+            dp[r][0] = 1;                      // Each cell can start with 1 move
+        }
+
+        int maxMoves = 0;                     // Variable to track the maximum moves
+
+        // Iterate through columns starting from the second column
+        for (int c = 1; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                // Check right movement
+                if (grid[r][c] > grid[r][c - 1] && dp[r][0] > 0) {
+                    dp[r][1] = max(dp[r][1], dp[r][0] + 1); // Update moves from left
+                }
+                // Check diagonal movement from the upper-left cell
+                if (r - 1 >= 0 && grid[r][c] > grid[r - 1][c - 1] &&
+                    dp[r - 1][0] > 0) {
+                    dp[r][1] = max(dp[r][1], dp[r - 1][0] + 1); // Update moves from upper left
+                }
+                // Check diagonal movement from the lower-left cell
+                if (r + 1 < rows && grid[r][c] > grid[r + 1][c - 1] &&
+                    dp[r + 1][0] > 0) {
+                    dp[r][1] = max(dp[r][1], dp[r + 1][0] + 1); // Update moves from lower left
+                }
+
+                // Update maxMoves with the maximum found so far
+                maxMoves = max(maxMoves, dp[r][1] - 1);
+            }
+
+            // Prepare for the next column iteration
+            for (int r = 0; r < rows; r++) {
+                dp[r][0] = dp[r][1]; // Move the current results to the previous column
+                dp[r][1] = 0;        // Reset the current column count for the next iteration
+            }
+        }
+
+        return maxMoves; // Return the maximum moves found
+    }
+};
