@@ -1,0 +1,36 @@
+class Solution {
+public:
+    int longestSquareStreak(vector<int>& numbers) {
+        // Map to store the length of square streak for each number
+        unordered_map<int, int> squareStreakLengths;
+
+        // Sort the input numbers
+        sort(numbers.begin(), numbers.end());
+
+        // Iterate through each number in the sorted list
+        for (int currentNumber : numbers) {
+            int squareRoot = static_cast<int>(sqrt(currentNumber)); // Calculate the integer square root
+
+            // Check if the current number is a perfect square
+            // and if its square root is already in the map
+            if (squareRoot * squareRoot == currentNumber &&
+                squareStreakLengths.find(squareRoot) != squareStreakLengths.end()) {
+                // If yes, extend the streak from its square root
+                squareStreakLengths[currentNumber] = squareStreakLengths[squareRoot] + 1;
+            } else {
+                // Otherwise, start a new streak for this number
+                squareStreakLengths[currentNumber] = 1;
+            }
+        }
+
+        // Variable to track the maximum streak length found
+        int maxStreakLength = 0;
+        // Iterate through the map to find the longest streak
+        for (const auto& [number, streakLength] : squareStreakLengths) {
+            maxStreakLength = max(maxStreakLength, streakLength);
+        }
+
+        // Return -1 if no valid streak found; otherwise, return the longest streak
+        return maxStreakLength == 1 ? -1 : maxStreakLength;
+    }
+};
