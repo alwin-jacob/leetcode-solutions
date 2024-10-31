@@ -1,0 +1,41 @@
+class Solution:
+    def minimumTotalDistance(self, robots: List[int], factories: List[List[int]]) -> int:
+        # Sort robots and factories by their positions
+        robots.sort()
+        factories.sort()
+
+        # Flatten factory positions based on their capacities
+        factory_positions = []
+        for factory in factories:
+            for _ in range(factory[1]):  # factory[1] is the capacity
+                factory_positions.append(factory[0])  # factory[0] is the position
+
+        robot_count = len(robots)
+        factory_count = len(factory_positions)
+        next_distance = [0] * (factory_count + 1)
+        current_distance = [0] * (factory_count + 1)
+
+        # Fill DP table using two rows for optimization
+        for i in range(robot_count - 1, -1, -1):
+            # Set distance to a large value if not the first robot
+            if i != robot_count - 1:
+                next_distance[factory_count] = float('inf')  # Represents an unreachable distance
+
+            # Initialize current distance row
+            current_distance[factory_count] = float('inf')  # Represents an unreachable distance
+
+            for j in range(factory_count - 1, -1, -1):
+                # Option 1: Assign the current robot to the current factory
+                assign_distance = abs(robots[i] - factory_positions[j]) + next_distance[j + 1]
+
+                # Option 2: Skip the current factory for this robot
+                skip_distance = current_distance[j + 1]
+
+                # Store the minimum distance for the current robot-factory pair
+                current_distance[j] = min(assign_distance, skip_distance)
+
+            # Move to the next robot iteration
+            next_distance = current_distance[:]
+
+        # Return the minimum total distance starting from the first robot
+        return current_distance[0]
