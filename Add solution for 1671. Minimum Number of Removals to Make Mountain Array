@@ -1,0 +1,49 @@
+class Solution {
+public:
+    // Function to compute the length of the longest increasing subsequence
+    vector<int> getLongestIncreasingSubsequenceLength(vector<int>& sequence) {
+        vector<int> lisLengths(sequence.size(), 1);  // Stores lengths of LIS ending at each index
+        vector<int> lis = {sequence[0]};  // Stores the last elements of potential LIS
+
+        for (int i = 1; i < sequence.size(); i++) {
+            // Find the index of the first element in 'lis' that is greater than or equal to sequence[i]
+            int index = lower_bound(lis.begin(), lis.end(), sequence[i]) - lis.begin();
+
+            // If the current element is greater than the last element in 'lis', append it
+            if (index == lis.size()) {
+                lis.push_back(sequence[i]);
+            } else {
+                // Update the existing element at 'index' with the current element
+                lis[index] = sequence[i];
+            }
+
+            // Store the current length of the LIS at index 'i'
+            lisLengths[i] = lis.size();
+        }
+
+        return lisLengths;  // Return lengths of LIS for all indices
+    }
+
+    // Function to compute the minimum number of removals to form a mountain array
+    int minimumMountainRemovals(vector<int>& nums) {
+        int totalElements = nums.size();
+        vector<int> increasingSubsequenceLengths = getLongestIncreasingSubsequenceLength(nums);
+
+        // Reverse the original array to compute the longest decreasing subsequence
+        reverse(nums.begin(), nums.end());
+        vector<int> decreasingSubsequenceLengths = getLongestIncreasingSubsequenceLength(nums);
+        // Reverse the lengths array to represent the longest decreasing subsequence correctly
+        reverse(decreasingSubsequenceLengths.begin(), decreasingSubsequenceLengths.end());
+
+        int minRemovals = INT_MAX;  // Initialize minimum removals to a large value
+        for (int i = 0; i < totalElements; i++) {
+            // Check if there's a valid mountain at index 'i'
+            if (increasingSubsequenceLengths[i] > 1 && decreasingSubsequenceLengths[i] > 1) {
+                // Calculate the number of removals required to maintain the mountain shape
+                minRemovals = min(minRemovals, totalElements - increasingSubsequenceLengths[i] - decreasingSubsequenceLengths[i] + 1);
+            }
+        }
+
+        return minRemovals;  // Return the minimum removals required
+    }
+};
