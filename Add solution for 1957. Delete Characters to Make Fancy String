@@ -1,0 +1,26 @@
+class Solution {
+public:
+    string makeFancyString(string inputStr) {
+        // If the length of the string is less than 3, return it as is.
+        if (inputStr.length() < 3) {
+            return inputStr;
+        }
+
+        int newIndex = 2; // Index to place the next valid character.
+        
+        // Iterate through the string starting from the third character.
+        for (int currentIndex = 2; currentIndex < inputStr.size(); ++currentIndex) {
+            // If the current character is not equal to the last two characters
+            // added to the new string, then add it to the string.
+            if (inputStr[currentIndex] != inputStr[newIndex - 1] || 
+                inputStr[currentIndex] != inputStr[newIndex - 2]) {
+                inputStr[newIndex++] = inputStr[currentIndex]; // Add the valid character.
+            }
+        }
+
+        // Resize the string to keep only the valid characters added,
+        // indicated by newIndex.
+        inputStr.resize(newIndex);
+        return inputStr; // Return the modified string.
+    }
+};
