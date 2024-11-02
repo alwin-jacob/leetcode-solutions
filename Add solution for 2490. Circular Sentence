@@ -1,0 +1,17 @@
+class Solution {
+public:
+    bool isCircularSentence(string sentence) {
+        // Check each character in the sentence
+        for (int index = 0; index < sentence.size(); ++index) {
+            // If we encounter a space, check the characters before and after it
+            if (sentence[index] == ' ') {
+                // Compare the last character of the previous word with the first character of the next word
+                if (sentence[index - 1] != sentence[index + 1]) {
+                    return false; // Return false if they don't match
+                }
+            }
+        }
+        // Check if the first and last characters of the entire sentence match
+        return sentence[0] == sentence[sentence.size() - 1];
+    }
+};
