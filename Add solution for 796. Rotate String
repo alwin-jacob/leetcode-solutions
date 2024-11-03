@@ -1,0 +1,69 @@
+class Solution {
+public:
+    bool rotateString(string s, string goal) {
+        // Check if the lengths of both strings are different; if so, they can't be rotations
+        if (s.length() != goal.length()) return false;
+
+        // Concatenate 's' with itself to create a new string that contains all possible rotations
+        string doubledS = s + s;
+
+        // Use KMP substring search to check if 'goal' is a substring of 'doubledS'
+        return kmpSubstringSearch(doubledS, goal);
+    }
+
+private:
+    bool kmpSubstringSearch(string& text, string& pattern) {
+        // Precompute the LPS (Longest Prefix Suffix) array for the pattern
+        vector<int> lps = computeLPSArray(pattern);
+        int textIndex = 0; // Index for traversing the text
+        int patternIndex = 0; // Index for traversing the pattern
+        int textLength = text.size();
+        int patternLength = pattern.size();
+
+        // Loop through the text to find the pattern
+        while (textIndex < textLength) {
+            // If characters match, move both indices forward
+            if (text[textIndex] == pattern[patternIndex]) {
+                textIndex++;
+                patternIndex++;
+                // If we've matched the entire pattern, return true
+                if (patternIndex == patternLength) return true;
+            }
+            // If there's a mismatch after some matches, use the LPS array to skip unnecessary comparisons
+            else if (patternIndex > 0) {
+                patternIndex = lps[patternIndex - 1];
+            }
+            // If no matches, move to the next character in text
+            else {
+                textIndex++;
+            }
+        }
+        // Pattern not found in text
+        return false;
+    }
+
+    vector<int> computeLPSArray(string& pattern) {
+        int patternLength = pattern.size();
+        vector<int> lps(patternLength, 0); // Longest Prefix Suffix array
+        int length = 0; // Length of the previous longest prefix suffix
+        int index = 1; // Current index in the pattern
+
+        // Build the LPS array
+        while (index < patternLength) {
+            // If characters match, increment length and set lps value
+            if (pattern[index] == pattern[length]) {
+                length++;
+                lps[index++] = length;
+            }
+            // If there's a mismatch, update length using the previous LPS value
+            else if (length > 0) {
+                length = lps[length - 1];
+            }
+            // No match and length is zero
+            else {
+                lps[index++] = 0;
+            }
+        }
+        return lps;
+    }
+};
