@@ -1,0 +1,28 @@
+class Solution {
+public:
+    string compressedString(string inputWord) {
+        string compressedResult = ""; // Resultant string for compressed output
+
+        // index tracks our current position in the input string
+        int index = 0;
+
+        // Process until we reach the end of the input string
+        while (index < inputWord.length()) {
+            int countConsecutive = 0; // Count of consecutive occurrences of the current character
+
+            char currentCharacter = inputWord[index]; // Store the current character
+
+            // Count consecutive occurrences (maximum 9)
+            while (index < inputWord.length() && countConsecutive < 9 &&
+                   inputWord[index] == currentCharacter) {
+                countConsecutive++; // Increment the count for each occurrence
+                index++; // Move to the next character
+            }
+
+            // Append the count followed by the character to the compressed result
+            compressedResult += to_string(countConsecutive) + currentCharacter;
+        }
+
+        return compressedResult; // Return the final compressed string
+    }
+};
