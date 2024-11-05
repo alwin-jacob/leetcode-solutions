@@ -1,0 +1,18 @@
+class Solution {
+public:
+    // Function to calculate minimum changes required
+    int minChanges(string str) {
+        int changesRequired = 0;  // Variable to store the minimum changes required
+
+        // Iterate over the string in pairs, checking characters at positions i and i+1
+        for (int index = 0; index < str.length() - 1; index += 2) {
+            // If the current pair of characters (str[index] and str[index + 1]) are not the same,
+            // one change is needed to make them equal
+            if (str[index] != str[index + 1]) {
+                changesRequired++;
+            }
+        }
+
+        return changesRequired;  // Return the total number of changes required
+    }
+};
