@@ -1,0 +1,49 @@
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    bool canSortArray(vector<int>& inputArray) {
+        int arraySize = inputArray.size();                // Get the size of the input array
+        vector<int> modifiedArray = inputArray;          // Create a copy of the original array
+
+        // First Pass: Iterate from left to right
+        // Goal: Move the maximum value of each segment as far right as possible
+        for (int currentIndex = 0; currentIndex < arraySize - 1; currentIndex++) {
+            // If the current element is less than or equal to the next,
+            // continue to the next iteration
+            if (modifiedArray[currentIndex] <= modifiedArray[currentIndex + 1]) {
+                continue; // Elements are in order, no action needed
+            } else {
+                // Check if the current and next element have the same number of set bits
+                if (__builtin_popcount(modifiedArray[currentIndex]) ==
+                    __builtin_popcount(modifiedArray[currentIndex + 1])) {
+                    swap(modifiedArray[currentIndex], modifiedArray[currentIndex + 1]);  // Swap them if they do
+                } else {
+                    return false;  // Return false if they cannot be swapped
+                }
+            }
+        }
+
+        // Second Pass: Iterate from right to left
+        // Goal: Move the minimum value of each segment as far left as possible
+        for (int currentIndex = arraySize - 1; currentIndex >= 1; currentIndex--) {
+            // If the current element is greater than or equal to the previous,
+            // continue to the next iteration
+            if (modifiedArray[currentIndex] >= modifiedArray[currentIndex - 1]) {
+                continue; // Elements are in order, no action needed
+            } else {
+                // Check if the current and previous element have the same number of set bits
+                if (__builtin_popcount(modifiedArray[currentIndex]) ==
+                    __builtin_popcount(modifiedArray[currentIndex - 1])) {
+                    swap(modifiedArray[currentIndex], modifiedArray[currentIndex - 1]);  // Swap them if they do
+                } else {
+                    return false;  // Return false if they cannot be swapped
+                }
+            }
+        }
+
+        // If both passes complete without returning false, the array can be sorted
+        return true;  // All segments can be sorted appropriately
+    }
+};
