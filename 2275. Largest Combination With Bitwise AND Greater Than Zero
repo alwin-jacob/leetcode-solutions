@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int largestCombination(vector<int>& nums) {
+        int maxSetBitsCount = 0;  // Variable to track the maximum count of numbers with set bits.
+        for (int bitPosition = 0; bitPosition < 24; bitPosition++) {
+            int currentCount = 0;  // Count of numbers with the current bit set.
+            for (int number : nums) {
+                if ((number & (1 << bitPosition)) != 0) {  // Check if the current bit is set.
+                    currentCount++;
+                }
+            }
+            maxSetBitsCount = max(maxSetBitsCount, currentCount);  // Update the maximum count if current count is greater.
+        }
+        return maxSetBitsCount;  // Return the maximum count of numbers with any single bit set.
+    }
+};
