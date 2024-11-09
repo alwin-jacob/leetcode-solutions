@@ -1,0 +1,22 @@
+class Solution {
+public:
+    long long minEnd(int bitCount, int initialValue) {
+        long long finalResult = initialValue;  // Initialize the result with the initial value.
+        long long bitMask;  // Variable to represent the current bit mask.
+        
+        --bitCount;  // Decrease bitCount by 1 to exclude initialValue from further processing.
+
+        // Step 1: Iterate over each bit position, starting with the least significant bit.
+        for (bitMask = 1; bitCount > 0; bitMask <<= 1) {
+            // Step 2: Check if the corresponding bit in initialValue is 0.
+            if ((bitMask & initialValue) == 0) {
+                // Set the bit in finalResult based on the least significant bit of bitCount.
+                finalResult |= (bitCount & 1) * bitMask;  
+                // Shift bitCount to the right by 1 to process the next bit.
+                bitCount >>= 1;  
+            }
+        }
+
+        return finalResult;  // Return the final computed result.
+    }
+};
