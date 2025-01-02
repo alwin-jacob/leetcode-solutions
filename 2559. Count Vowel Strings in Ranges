@@ -1,0 +1,41 @@
+class Solution {
+public:
+    vector<int> vowelStrings(vector<string>& words, vector<vector<int>>& queries) {
+        // Result vector to store the answer for each query
+        vector<int> result(queries.size());
+
+        // Set of vowels for fast lookup
+        unordered_set<char> vowels{'a', 'e', 'i', 'o', 'u'};
+        
+        // Prefix sum array to store the cumulative count of words that start and end with vowels
+        vector<int> prefixCount(words.size());
+
+        // Variable to maintain the cumulative count of vowel-starting and vowel-ending words
+        int countVowelWords = 0;
+
+        // Iterate over all words to populate the prefixCount array
+        for (int i = 0; i < words.size(); i++) {
+            string currentWord = words[i];
+
+            // Check if both the first and last characters are vowels
+            if (vowels.count(currentWord[0]) && vowels.count(currentWord[currentWord.size() - 1])) {
+                countVowelWords++;
+            }
+
+            // Store the cumulative count up to the current word
+            prefixCount[i] = countVowelWords;
+        }
+
+        // Process each query
+        for (int i = 0; i < queries.size(); i++) {
+            vector<int> query = queries[i];
+            int left = query[0];
+            int right = query[1];
+
+            // Calculate the count of vowel-starting and vowel-ending words in the range [left, right]
+            result[i] = prefixCount[right] - (left == 0 ? 0 : prefixCount[left - 1]);
+        }
+
+        return result;
+    }
+};
